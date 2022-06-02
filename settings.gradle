@@ -1,1 +1,3 @@
-rootProject.name = 'twitch4j-minecraft-plugin'
+rootProject.name = 'BadB7s-Bad-Buttons'
+include('twitch')
+include('modules')

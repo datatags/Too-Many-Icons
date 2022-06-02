@@ -1,0 +1,8 @@
+name: BadB7sBadButtons
+version: @version@
+main: me.datatags.badb7sbadbuttons.BadB7sBadButtons
+api-version: 1.18
+commands:
+    bbbb:
+        description: modify stuff
+        permission: bbbb.use
