@@ -1,0 +1,6 @@
+name: BadB7sBadButtons-modules
+version: @version@
+main: me.datatags.badb7sbadbuttons.Modules
+author: Datatags
+api-version: 1.13
+depend: [BadB7sBadButtons]

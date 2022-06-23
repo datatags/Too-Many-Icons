@@ -9,7 +9,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 
 import com.github.twitch4j.helix.TwitchHelix;
-import com.github.twitch4j.helix.domain.CustomReward;
 import com.netflix.hystrix.HystrixCommand;
 
 import java.util.ArrayList;
@@ -20,6 +19,7 @@ import me.datatags.badb7sbadbuttons.actions.Action;
 
 public class RewardCommand implements TabExecutor {
     private final BadB7sBadButtons plugin;
+
     public RewardCommand(BadB7sBadButtons plugin) {
         this.plugin = plugin;
     }
@@ -27,37 +27,57 @@ public class RewardCommand implements TabExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (args.length < 2) {
-            sender.sendMessage(ChatColor.GREEN + "Available commands: enable, disable, setprice, trigger, settarget");
+            sender.sendMessage(ChatColor.GREEN + "Available commands: enable, disable, pause, unpause, setprice, trigger, settarget");
             return false;
         }
         if (args[0].equalsIgnoreCase("settarget")) {
             if (args[1].equalsIgnoreCase("default")) {
                 plugin.getActionManager().setTargetUUID(null);
                 sender.sendMessage(ChatColor.GREEN + "Reset target to default");
-                return true;
+            } else {
+                Player newTarget = Bukkit.getPlayer(args[1]);
+                if (newTarget == null) {
+                    sender.sendMessage(ChatColor.RED + "Invalid player");
+                    return true;
+                }
+                plugin.getActionManager().setTargetUUID(newTarget.getUniqueId());
+                sender.sendMessage(ChatColor.GREEN + "Target set. Use '/" + label + " settarget default' to reset");
             }
-            Player newTarget = Bukkit.getPlayer(args[1]);
-            if (newTarget == null) {
-                sender.sendMessage(ChatColor.RED + "Invalid player");
-                return true;
+            if (Bukkit.getPlayer(plugin.getActionManager().getTargetUUID()) == null) {
+                sender.sendMessage(ChatColor.RED + "Pausing redeems because target is not online");
+                plugin.getActionManager().updateAll(r -> r.withIsPaused(true));
+            } else {
+                sender.sendMessage(ChatColor.GREEN + "Unpausing redeems because target is online");
+                plugin.getActionManager().updateAll(r -> r.withIsPaused(false));
             }
-            plugin.getActionManager().setTargetUUID(newTarget.getUniqueId());
-            sender.sendMessage(ChatColor.GREEN + "Target set. Use '/" + label + " settarget default' to reset");
             return true;
         }
-        Action action = plugin.getActionManager().getByName(args[1]);
-        if (action == null) {
-            sender.sendMessage(ChatColor.RED + "Unknown reward: " + args[1]);
-            return true;
+        List<Action> actions = new ArrayList<>();
+        if (args[1].equalsIgnoreCase("all")) {
+            actions.addAll(plugin.getActionManager().getActions());
+        } else {
+            Action action = plugin.getActionManager().getByName(args[1]);
+            if (action == null) {
+                sender.sendMessage(ChatColor.RED + "Unknown reward: " + args[1]);
+                return true;
+            }
+            actions.add(action);
         }
-        CustomReward reward = action.getReward();
         if (args[0].equalsIgnoreCase("enable")) {
-            action.update(reward.withIsEnabled(true));
+            actions.forEach(a -> a.update(r -> r.withIsEnabled(true)));
             sender.sendMessage(ChatColor.GREEN + "Reward enabled");
             return true;
         } else if (args[0].equalsIgnoreCase("disable")) {
-            action.update(reward.withIsEnabled(false));
+            actions.forEach(a -> a.update(r -> r.withIsEnabled(false)));
             sender.sendMessage(ChatColor.GREEN + "Reward disabled");
+            return true;
+        } else if (args[0].equalsIgnoreCase("pause")) {
+            actions.forEach(a -> a.update(r -> r.withIsPaused(true)));
+            sender.sendMessage(ChatColor.GREEN + "Reward paused");
+            return true;
+        } else if (args[0].equalsIgnoreCase("unpause")) {
+            actions.forEach(a -> a.update(r -> r.withIsPaused(false)));
+            sender.sendMessage(ChatColor.GREEN + "Reward unpaused");
             return true;
         } else if (args[0].equalsIgnoreCase("setprice")) {
             if (args.length < 3) {
@@ -71,11 +91,18 @@ public class RewardCommand implements TabExecutor {
                 sender.sendMessage(ChatColor.RED + "Invalid price");
                 return true;
             }
-            action.update(reward.withCost(price));
+            actions.forEach(a -> a.update(a.getReward().withCost(price)));
             sender.sendMessage(ChatColor.GREEN + "Price updated");
             return true;
         } else if (args[0].equalsIgnoreCase("trigger")) {
-            plugin.getActionManager().triggerAction(action, sender.getName() + " (in-game)");
+            String input = args.length > 2 ? args[2] : "";
+            List<Action> inputFiltered = new ArrayList<>(actions);
+            inputFiltered.removeIf(a -> a.validateInput(input));
+            if (inputFiltered.size() != 0) {
+                sender.sendMessage(ChatColor.RED + "Invalid input");
+                return true;
+            }
+            actions.forEach(a -> plugin.getActionManager().triggerAction(a, sender.getName() + " (in-game)", input, null));
         }
         return true;
     }
@@ -86,6 +113,8 @@ public class RewardCommand implements TabExecutor {
         if (args.length == 1) {
             options.add("enable");
             options.add("disable");
+            options.add("pause");
+            options.add("unpause");
             options.add("setprice");
             options.add("trigger");
             options.add("settarget");

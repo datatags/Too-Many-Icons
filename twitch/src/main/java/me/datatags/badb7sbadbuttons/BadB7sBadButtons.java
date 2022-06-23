@@ -8,6 +8,7 @@ import com.github.philippheuer.credentialmanager.domain.OAuth2Credential;
 import com.github.philippheuer.events4j.simple.SimpleEventHandler;
 import com.github.twitch4j.ITwitchClient;
 import com.github.twitch4j.TwitchClientBuilder;
+import com.github.twitch4j.helix.domain.User;
 
 import java.io.IOException;
 
@@ -24,12 +25,13 @@ public final class BadB7sBadButtons extends JavaPlugin {
     private ActionManager actionManager;
     private String broadcasterId;
     private ITwitchClient client = null;
+    private boolean failure = false;
 
     @Override
     public void onEnable() {
         instance = this;
         // Get the latest config after saving the default if missing
-        this.saveDefaultConfig();
+        saveDefaultConfig();
 
         Bukkit.getScheduler().runTaskAsynchronously(this, () -> setupClient());
         getCommand("bbbb").setExecutor(new RewardCommand(this));
@@ -72,8 +74,15 @@ public final class BadB7sBadButtons extends JavaPlugin {
                 expiration = object.getLong("expires_in");
             }
         } catch (IOException e) {
-            // ???
             e.printStackTrace();
+            // If we already failed to contact twitch...
+            if (failure) {
+                getLogger().severe("Failed again to contact twitch, giving up.");
+                return;
+            }
+            getLogger().warning("Failed to request token status, retrying in 5 minutes...");
+            failure = true;
+            Bukkit.getScheduler().runTaskLaterAsynchronously(this, () -> setupClient(), 5 * 60 * 20);
             return;
         }
         // If it expires in less than 45 minutes, just grab a new one now
@@ -85,6 +94,13 @@ public final class BadB7sBadButtons extends JavaPlugin {
             try (Response response = http.newCall(request).execute()) {
                 if (!response.isSuccessful()) {
                     getLogger().severe("Failed to refresh token: " + response.body().string());
+                    // If we already failed to contact twitch...
+                    if (failure) {
+                        getLogger().severe("Failed again to contact twitch, giving up.");
+                        return;
+                    }
+                    failure = true;
+                    Bukkit.getScheduler().runTaskLaterAsynchronously(this, () -> setupClient(), 5 * 60 * 20);
                     return;
                 }
                 JSONObject object = new JSONObject(response.body().string());
@@ -92,20 +108,24 @@ public final class BadB7sBadButtons extends JavaPlugin {
                 refresh = object.getString("refresh_token");
                 expiration = object.getLong("expires_in");
             } catch (IOException e) {
-                // ???
                 e.printStackTrace();
+                // If we already failed to contact twitch...
+                if (failure) {
+                    getLogger().severe("Failed again to contact twitch, giving up.");
+                    return;
+                }
+                getLogger().warning("Failed to request token status, retrying in 5 minutes...");
+                failure = true;
+                Bukkit.getScheduler().runTaskLaterAsynchronously(this, () -> setupClient(), 5 * 60 * 20);
                 return;
             }
             getConfig().set("access_token", access);
             getConfig().set("refresh_token", refresh);
             saveConfig();
-            getLogger().info("Successfully retrieved new token!");
-        }
-
-        if (valid) {
+            getLogger().info("Successfully retrieved new token, which expires in " + expiration + " seconds");
+        } else {
             getLogger().info("Current token expires in " + expiration + " seconds");
             if (client != null) {
-                getLogger().info("Will re-check in 30 minutes");
                 Bukkit.getScheduler().runTaskLaterAsynchronously(this, () -> setupClient(), 30 * 60 * 20);
                 return;
             }
@@ -118,21 +138,27 @@ public final class BadB7sBadButtons extends JavaPlugin {
         }
         // Build TwitchClient
         client = TwitchClientBuilder.builder()
-            .withClientId(getConfig().getString("client_id"))
-            .withClientSecret(getConfig().getString("client_secret"))
-            .withEnablePubSub(true)
-            .withEnableHelix(true)
-            .withDefaultAuthToken(credential)
-            .build();
+                .withClientId(getConfig().getString("client_id"))
+                .withClientSecret(getConfig().getString("client_secret"))
+                .withEnablePubSub(true)
+                .withEnableHelix(true)
+                .withDefaultAuthToken(credential)
+                .withEnableChat(true)
+                .withChatAccount(credential)
+                .build();
 
-        broadcasterId = client.getHelix().getUsers(access, null, null).execute().getUsers().get(0).getId();
+        User user = client.getHelix().getUsers(access, null, null).execute().getUsers().get(0);
+        broadcasterId = user.getId();
         getLogger().info("Found broadcaster with ID " + broadcasterId);
         client.getPubSub().listenForChannelPointsRedemptionEvents(credential, broadcasterId);
         // Register event listeners
         client.getEventManager().getEventHandler(SimpleEventHandler.class).registerListener(new TwitchEventHandler(this));
+        // not required if helix is already registered to this channel I guess?
+        // client.getChat().joinChannel(user.getLogin());
+        client.getClientHelper().enableStreamEventListener(user.getLogin());
         Bukkit.getScheduler().runTaskLaterAsynchronously(this, () -> setupClient(), 30 * 60 * 20);
-        getLogger().info("Client ready, will re-check token in 30 minutes");
         actionManager.setup();
+        failure = false;
     }
 
     public static BadB7sBadButtons getInstance() {

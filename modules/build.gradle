@@ -1,0 +1,19 @@
+import org.apache.tools.ant.filters.ReplaceTokens
+
+dependencies {
+    implementation project(':twitch')
+    // Minecraft server environment (provided)
+    compileOnly 'org.spigotmc:spigot-api:1.19-R0.1-SNAPSHOT'
+    compileOnly group: 'com.github.twitch4j', name: 'twitch4j', version: '1.10.0'
+}
+
+jar {
+    archiveBaseName = 'BadB7s-Bad-Buttons-modules'
+}
+
+processResources {
+    from(sourceSets.main.resources.srcDirs) {
+        duplicatesStrategy DuplicatesStrategy.INCLUDE // config, logback, and plugin yml files are not dupes - https://github.com/gradle/gradle/issues/17236
+        filter ReplaceTokens, tokens: [version: version]
+    }
+}

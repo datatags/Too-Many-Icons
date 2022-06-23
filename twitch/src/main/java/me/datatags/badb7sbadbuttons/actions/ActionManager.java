@@ -4,14 +4,16 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import com.github.twitch4j.eventsub.domain.RedemptionStatus;
+import com.github.twitch4j.helix.domain.CustomReward;
 import com.github.twitch4j.pubsub.domain.ChannelPointsRedemption;
 
-import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Function;
 
 import me.datatags.badb7sbadbuttons.BadB7sBadButtons;
 
@@ -21,8 +23,13 @@ public class ActionManager {
     private final BadB7sBadButtons plugin;
     private boolean setup = false;
     private UUID targetUUID = BADB7;
+
     public ActionManager(BadB7sBadButtons plugin) {
         this.plugin = plugin;
+    }
+
+    public Collection<Action> getActions() {
+        return actions.values();
     }
 
     public Set<String> getActionNames() {
@@ -31,31 +38,33 @@ public class ActionManager {
 
     public void execute(ChannelPointsRedemption redemption) {
         for (Action action : actions.values()) {
-            if (action.reward.getId().equals(redemption.getReward().getId())) {
+            if (action.getReward().getId().equals(redemption.getReward().getId())) {
                 if (Bukkit.getPlayer(targetUUID) == null) {
-                    setStatus(redemption, RedemptionStatus.CANCELED);
+                    action.setStatus(redemption.getId(), RedemptionStatus.CANCELED);
+                    plugin.getLogger().info("Canceled reward due to no target");
                     return;
                 }
-                triggerAction(action, redemption.getUser().getDisplayName());
-                setStatus(redemption, RedemptionStatus.FULFILLED);
+                if (action.acceptsInput() && !action.validateInput(redemption.getUserInput())) {
+                    action.setStatus(redemption.getId(), RedemptionStatus.CANCELED);
+                    plugin.getLogger().info("Canceled reward due to invalid input: " + redemption.getUserInput());
+                    return;
+                }
+                triggerAction(action, redemption.getUser().getDisplayName(), redemption.getUserInput(), redemption.getId());
+                if (action.autoFulfill()) {
+                    action.setStatus(redemption.getId(), RedemptionStatus.FULFILLED);
+                }
                 return;
             }
         }
-        plugin.getLogger().warning("Received unknown reward ID: " + redemption.getReward().getId());
+        // Must be a reward that we don't control, so ignore it.
     }
 
-    public void triggerAction(Action action, String name) {
+    public void triggerAction(Action action, String name, String input, String redemptionId) {
         Player target = Bukkit.getPlayer(targetUUID);
         if (target != null) {
-            Bukkit.broadcastMessage(name + " just redeemed reward " + action.getReward().getTitle());
-            Bukkit.getScheduler().runTask(plugin, () -> action.onAction(target));
+            Bukkit.broadcastMessage(name + " just redeemed reward " + action.getTitle());
+            Bukkit.getScheduler().runTask(plugin, () -> action.onAction(target, input, redemptionId));
         }
-    }
-
-    private void setStatus(ChannelPointsRedemption redemption, RedemptionStatus status) {
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> 
-            plugin.getTwitchClient().getHelix().updateRedemptionStatus(null, plugin.getBroadcasterId(), redemption.getReward().getId(), Arrays.asList(redemption.getId()), status).execute()
-        );
     }
 
     public Action getByName(String name) {
@@ -77,11 +86,21 @@ public class ActionManager {
         }
     }
 
+    public UUID getTargetUUID() {
+        return targetUUID;
+    }
+
     public void setTargetUUID(UUID uuid) {
         if (uuid == null) {
             targetUUID = BADB7;
         } else {
             targetUUID = uuid;
+        }
+    }
+
+    public void updateAll(Function<CustomReward,CustomReward> func) {
+        for (Action action : getActions()) {
+            action.update(func);
         }
     }
 }
