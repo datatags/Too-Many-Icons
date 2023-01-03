@@ -1,4 +1,4 @@
-package me.datatags.badb7sbadbuttons.actions;
+package me.datatags.toomanyicons.actions;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -15,17 +15,19 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.function.Function;
 
-import me.datatags.badb7sbadbuttons.BadB7sBadButtons;
+import me.datatags.toomanyicons.TooManyIcons;
 
 public class ActionManager {
-    private static final UUID BADB7 = UUID.fromString("32002aff-f136-4a9a-9406-2944ddf657aa");
+    private final UUID defaultTarget;
     private final Map<String,Action> actions = new HashMap<>();
-    private final BadB7sBadButtons plugin;
+    private final TooManyIcons plugin;
     private boolean setup = false;
-    private UUID targetUUID = BADB7;
+    private UUID targetUUID;
 
-    public ActionManager(BadB7sBadButtons plugin) {
+    public ActionManager(TooManyIcons plugin) {
         this.plugin = plugin;
+        this.defaultTarget = UUID.fromString(plugin.getConfig().getString("streamer-uuid"));
+        this.targetUUID = defaultTarget;
     }
 
     public Collection<Action> getActions() {
@@ -92,7 +94,7 @@ public class ActionManager {
 
     public void setTargetUUID(UUID uuid) {
         if (uuid == null) {
-            targetUUID = BADB7;
+            targetUUID = defaultTarget;
         } else {
             targetUUID = uuid;
         }

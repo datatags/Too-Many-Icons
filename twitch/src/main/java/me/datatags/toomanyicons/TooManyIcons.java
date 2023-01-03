@@ -1,4 +1,4 @@
-package me.datatags.badb7sbadbuttons;
+package me.datatags.toomanyicons;
 
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -12,16 +12,16 @@ import com.github.twitch4j.helix.domain.User;
 
 import java.io.IOException;
 
-import me.datatags.badb7sbadbuttons.actions.ActionManager;
+import me.datatags.toomanyicons.actions.ActionManager;
 import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public final class BadB7sBadButtons extends JavaPlugin {
+public final class TooManyIcons extends JavaPlugin {
 
-    private static BadB7sBadButtons instance;
+    private static TooManyIcons instance;
     private ActionManager actionManager;
     private String broadcasterId;
     private ITwitchClient client = null;
@@ -34,7 +34,7 @@ public final class BadB7sBadButtons extends JavaPlugin {
         saveDefaultConfig();
 
         Bukkit.getScheduler().runTaskAsynchronously(this, () -> setupClient());
-        getCommand("bbbb").setExecutor(new RewardCommand(this));
+        getCommand("tmi").setExecutor(new RewardCommand(this));
         actionManager = new ActionManager(this);
     }
 
@@ -156,7 +156,7 @@ public final class BadB7sBadButtons extends JavaPlugin {
         failure = false;
     }
 
-    public static BadB7sBadButtons getInstance() {
+    public static TooManyIcons getInstance() {
         return instance;
     }
 }

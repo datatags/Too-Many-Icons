@@ -98,7 +98,11 @@
 ############################## SENSITIVE INFORMATION ###############################
 ############################## SENSITIVE INFORMATION ###############################
 ############################## SENSITIVE INFORMATION ###############################
+
+# See README for how to obtain these.
 client_id: ''
 client_secret: ''
 access_token: ''
 refresh_token: ''
+# Include hyphens
+streamer-uuid: '1a76c20c-a5b6-4c84-b2e8-4079fcdc14e8'

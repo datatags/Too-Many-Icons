@@ -1,8 +1,9 @@
-name: BadB7sBadButtons
+name: TooManyIcons
 version: @version@
-main: me.datatags.badb7sbadbuttons.BadB7sBadButtons
-api-version: 1.18
+main: me.datatags.toomanyicons.TooManyIcons
+api-version: 1.13
 commands:
-    bbbb:
-        description: modify stuff
-        permission: bbbb.use
+    tmi:
+        description: Trigger rewards or change reward settings
+        permission: toomanyicons.use
+        usage: /<command> [args]

@@ -1,4 +1,4 @@
-package me.datatags.badb7sbadbuttons.modules;
+package me.datatags.tmi.modules;
 
 import org.bukkit.Sound;
 import org.bukkit.Statistic;
@@ -9,7 +9,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import com.github.twitch4j.eventsub.domain.RedemptionStatus;
 
-import me.datatags.badb7sbadbuttons.actions.Action;
+import me.datatags.toomanyicons.actions.Action;
 
 public class TimeBombAction extends Action {
 

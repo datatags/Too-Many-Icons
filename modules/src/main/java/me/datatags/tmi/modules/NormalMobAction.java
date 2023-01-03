@@ -1,4 +1,4 @@
-package me.datatags.badb7sbadbuttons.modules;
+package me.datatags.tmi.modules;
 
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Mob;

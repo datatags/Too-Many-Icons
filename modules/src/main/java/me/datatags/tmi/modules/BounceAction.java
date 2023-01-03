@@ -1,9 +1,9 @@
-package me.datatags.badb7sbadbuttons.modules;
+package me.datatags.tmi.modules;
 
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import me.datatags.badb7sbadbuttons.actions.Action;
+import me.datatags.toomanyicons.actions.Action;
 
 public class BounceAction extends Action {
 

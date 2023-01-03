@@ -1,6 +1,6 @@
-name: BadB7sBadButtons-modules
+name: TooManyActions
 version: @version@
-main: me.datatags.badb7sbadbuttons.Modules
+main: me.datatags.toomanyicons.Actions
 author: Datatags
 api-version: 1.13
-depend: [BadB7sBadButtons]
+depend: [TooManyIcons]

@@ -1,4 +1,4 @@
-package me.datatags.badb7sbadbuttons;
+package me.datatags.toomanyicons;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -15,12 +15,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
-import me.datatags.badb7sbadbuttons.actions.Action;
+import me.datatags.toomanyicons.actions.Action;
 
 public class RewardCommand implements TabExecutor {
-    private final BadB7sBadButtons plugin;
+    private final TooManyIcons plugin;
 
-    public RewardCommand(BadB7sBadButtons plugin) {
+    public RewardCommand(TooManyIcons plugin) {
         this.plugin = plugin;
     }
 

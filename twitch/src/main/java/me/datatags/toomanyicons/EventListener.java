@@ -1,4 +1,4 @@
-package me.datatags.badb7sbadbuttons;
+package me.datatags.toomanyicons;
 
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -6,13 +6,13 @@ import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-import me.datatags.badb7sbadbuttons.actions.Action;
-import me.datatags.badb7sbadbuttons.actions.ActionManager;
+import me.datatags.toomanyicons.actions.Action;
+import me.datatags.toomanyicons.actions.ActionManager;
 
 public class EventListener implements Listener {
     private final ActionManager am;
 
-    public EventListener(BadB7sBadButtons plugin) {
+    public EventListener(TooManyIcons plugin) {
         this.am = plugin.getActionManager();
     }
 

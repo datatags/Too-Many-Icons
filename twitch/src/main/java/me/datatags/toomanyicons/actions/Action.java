@@ -1,4 +1,4 @@
-package me.datatags.badb7sbadbuttons.actions;
+package me.datatags.toomanyicons.actions;
 
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
@@ -12,10 +12,10 @@ import java.util.List;
 import java.util.StringJoiner;
 import java.util.function.Function;
 
-import me.datatags.badb7sbadbuttons.BadB7sBadButtons;
+import me.datatags.toomanyicons.TooManyIcons;
 
 public abstract class Action {
-    protected final BadB7sBadButtons plugin;
+    protected final TooManyIcons plugin;
     protected final String internalName;
     protected final String name;
     protected final String description;
@@ -23,7 +23,7 @@ public abstract class Action {
     protected CustomReward reward;
 
     public Action(String name, String description) {
-        this.plugin = BadB7sBadButtons.getInstance();
+        this.plugin = TooManyIcons.getInstance();
         this.internalName = name.replaceAll("[^a-zA-Z]", "").toLowerCase();
         this.name = name;
         this.description = description;

@@ -1,4 +1,4 @@
-package me.datatags.badb7sbadbuttons.modules;
+package me.datatags.tmi.modules;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -6,7 +6,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.Map;
 
-import me.datatags.badb7sbadbuttons.actions.Action;
+import me.datatags.toomanyicons.actions.Action;
 
 public class DiamondSetAction extends Action {
     private static final Material[] DIAMOND_MATERIALS = new Material[] { Material.DIAMOND_HELMET, Material.DIAMOND_CHESTPLATE, Material.DIAMOND_LEGGINGS, Material.DIAMOND_BOOTS,

@@ -28,7 +28,7 @@ processResources {
 
 // Create a fat jar at: build/libs/
 jar {
-    archiveBaseName = 'BadB7s-Bad-Buttons'
+    archiveBaseName = 'Too-Many-Icons'
 	from {
 		duplicatesStrategy DuplicatesStrategy.INCLUDE // primarily META-INF duplicates
 		configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }

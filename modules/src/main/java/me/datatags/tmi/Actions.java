@@ -1,23 +1,24 @@
-package me.datatags.badb7sbadbuttons;
+package me.datatags.tmi;
 
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import me.datatags.badb7sbadbuttons.actions.ActionManager;
-import me.datatags.badb7sbadbuttons.modules.BossMobAction;
-import me.datatags.badb7sbadbuttons.modules.BounceAction;
-import me.datatags.badb7sbadbuttons.modules.DiamondSetAction;
-import me.datatags.badb7sbadbuttons.modules.IronGolemAction;
-import me.datatags.badb7sbadbuttons.modules.NormalMobAction;
-import me.datatags.badb7sbadbuttons.modules.PotionAction;
-import me.datatags.badb7sbadbuttons.modules.RottenMeatAction;
-import me.datatags.badb7sbadbuttons.modules.TimeBombAction;
+import me.datatags.tmi.modules.BossMobAction;
+import me.datatags.tmi.modules.BounceAction;
+import me.datatags.tmi.modules.DiamondSetAction;
+import me.datatags.tmi.modules.IronGolemAction;
+import me.datatags.tmi.modules.NormalMobAction;
+import me.datatags.tmi.modules.PotionAction;
+import me.datatags.tmi.modules.RottenMeatAction;
+import me.datatags.tmi.modules.TimeBombAction;
+import me.datatags.toomanyicons.TooManyIcons;
+import me.datatags.toomanyicons.actions.ActionManager;
 
-public class Modules extends JavaPlugin {
+public class Actions extends JavaPlugin {
     @Override
     public void onEnable() {
-        ActionManager am = BadB7sBadButtons.getInstance().getActionManager();
+        ActionManager am = TooManyIcons.getInstance().getActionManager();
         am.registerAction(new PotionAction(new PotionEffect(PotionEffectType.BLINDNESS, 300, 0)));
         am.registerAction(new PotionAction(new PotionEffect(PotionEffectType.SLOW, 300, 3)));
         am.registerAction(new BounceAction());
