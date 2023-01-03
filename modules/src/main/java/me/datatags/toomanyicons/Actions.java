@@ -1,19 +1,18 @@
-package me.datatags.tmi;
+package me.datatags.toomanyicons;
 
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import me.datatags.tmi.modules.BossMobAction;
-import me.datatags.tmi.modules.BounceAction;
-import me.datatags.tmi.modules.DiamondSetAction;
-import me.datatags.tmi.modules.IronGolemAction;
-import me.datatags.tmi.modules.NormalMobAction;
-import me.datatags.tmi.modules.PotionAction;
-import me.datatags.tmi.modules.RottenMeatAction;
-import me.datatags.tmi.modules.TimeBombAction;
-import me.datatags.toomanyicons.TooManyIcons;
 import me.datatags.toomanyicons.actions.ActionManager;
+import me.datatags.toomanyicons.modules.BossMobAction;
+import me.datatags.toomanyicons.modules.BounceAction;
+import me.datatags.toomanyicons.modules.DiamondSetAction;
+import me.datatags.toomanyicons.modules.IronGolemAction;
+import me.datatags.toomanyicons.modules.NormalMobAction;
+import me.datatags.toomanyicons.modules.PotionAction;
+import me.datatags.toomanyicons.modules.RottenMeatAction;
+import me.datatags.toomanyicons.modules.TimeBombAction;
 
 public class Actions extends JavaPlugin {
     @Override

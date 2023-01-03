@@ -1,4 +1,4 @@
-package me.datatags.tmi.modules;
+package me.datatags.toomanyicons.modules;
 
 import org.bukkit.Sound;
 import org.bukkit.Statistic;

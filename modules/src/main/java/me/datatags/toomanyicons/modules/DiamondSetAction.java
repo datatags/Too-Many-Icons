@@ -1,4 +1,4 @@
-package me.datatags.tmi.modules;
+package me.datatags.toomanyicons.modules;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
