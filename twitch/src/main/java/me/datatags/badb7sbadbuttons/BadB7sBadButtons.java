@@ -143,8 +143,6 @@ public final class BadB7sBadButtons extends JavaPlugin {
                 .withEnablePubSub(true)
                 .withEnableHelix(true)
                 .withDefaultAuthToken(credential)
-                .withEnableChat(true)
-                .withChatAccount(credential)
                 .build();
 
         User user = client.getHelix().getUsers(access, null, null).execute().getUsers().get(0);
@@ -153,9 +151,6 @@ public final class BadB7sBadButtons extends JavaPlugin {
         client.getPubSub().listenForChannelPointsRedemptionEvents(credential, broadcasterId);
         // Register event listeners
         client.getEventManager().getEventHandler(SimpleEventHandler.class).registerListener(new TwitchEventHandler(this));
-        // not required if helix is already registered to this channel I guess?
-        // client.getChat().joinChannel(user.getLogin());
-        client.getClientHelper().enableStreamEventListener(user.getLogin());
         Bukkit.getScheduler().runTaskLaterAsynchronously(this, () -> setupClient(), 30 * 60 * 20);
         actionManager.setup();
         failure = false;

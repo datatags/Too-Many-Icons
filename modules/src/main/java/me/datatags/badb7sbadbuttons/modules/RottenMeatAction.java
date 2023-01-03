@@ -16,9 +16,10 @@ public class RottenMeatAction extends Action {
     public void onAction(Player player, String input, String redemptionId) {
         ItemStack[] inventory = player.getInventory().getContents();
         for (ItemStack stack : inventory) {
+            if (stack == null) continue;
             stack.setType(Material.ROTTEN_FLESH);
         }
-        player.getInventory().setContents(inventory);
+        // setContents is apparently unnecessary
     }
 
 }

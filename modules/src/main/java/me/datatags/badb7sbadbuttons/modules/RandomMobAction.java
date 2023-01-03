@@ -1,6 +1,9 @@
 package me.datatags.badb7sbadbuttons.modules;
 
 import org.bukkit.Bukkit;
+import org.bukkit.entity.EnderDragon;
+import org.bukkit.entity.EnderDragon.Phase;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
@@ -26,8 +29,12 @@ public abstract class RandomMobAction extends Action {
             }
         }
         EntityType random = types.get(ThreadLocalRandom.current().nextInt(types.size()));
-        player.getWorld().spawnEntity(player.getLocation(), random);
+        Entity entity = player.getWorld().spawnEntity(player.getLocation(), random);
         Bukkit.broadcastMessage("Spawning a " + titleCase(random.toString()));
+        if (random == EntityType.ENDER_DRAGON) {
+            // reset dragon AI
+            ((EnderDragon) entity).setPhase(Phase.CIRCLING);
+        }
     }
 
     public abstract boolean isValid(EntityType type);
